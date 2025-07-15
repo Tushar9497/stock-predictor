@@ -1,20 +1,20 @@
-# 📈 Stock Price Predictor
+Stock Price Predictor
 
 A machine learning-based project that predicts stock prices using LSTM neural networks.
 
-## 🚀 Features
+Features
 - Historical data preprocessing
 - LSTM-based prediction model
 - Model training & visualization
 - Deployment-ready structure
 
-## 🧠 Tech Stack
+## Tech Stack
 - Python
 - TensorFlow / Keras
 - NumPy, Pandas, Matplotlib
 - Streamlit / Flask (if applicable)
 
-## 🔧 Setup Instructions
+## Setup Instructions
 
 ```bash
 git clone https://github.com/your-username/stock-predictor.git
