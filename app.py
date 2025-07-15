@@ -1,32 +1,49 @@
-import numpy as np
-import pandas as pd
-import yfinance as yf
 import streamlit as st
-from sklearn.preprocessing import MinMaxScaler
-from tensorflow.keras.models import load_model
+import numpy as np
+import tensorflow as tf
+import matplotlib.pyplot as plt
 
-st.title('📈 Stock Market Price Predictor')
+# Load TFLite model
+interpreter = tf.lite.Interpreter(model_path="stock_model.tflite")
+interpreter.allocate_tensors()
 
-stock = st.text_input("Enter stock symbol (e.g., AAPL, GOOG)", "GOOG")
+# Get model input and output details
+input_details = interpreter.get_input_details()
+output_details = interpreter.get_output_details()
 
-if stock:
-    start = '2012-01-01'
-    end = '2022-12-31'
-    data = yf.download(stock, start=start, end=end)
+# Set up Streamlit page
+st.set_page_config(page_title="Stock Predictor", layout="centered")
+st.title("📈 Stock Price Predictor")
+st.write("Predict the next stock price based on the last 100 days' data.")
 
-    st.subheader('Raw Data')
-    st.write(data.tail())
+# User input
+user_input = st.text_area("Enter 100 stock prices separated by commas", "")
 
-    data = data[['Close']]
-    scaler = MinMaxScaler(feature_range=(0, 1))
-    data_scaled = scaler.fit_transform(data)
+# Prediction button
+if st.button("Predict"):
 
-    past_100 = data_scaled[-100:]
-    model_input = np.array([past_100])
+    try:
+        # Parse and validate input
+        input_list = [float(x.strip()) for x in user_input.split(",") if x.strip()]
+        if len(input_list) != 100:
+            st.error("Please enter exactly 100 numeric values.")
+        else:
+            # Preprocess input for model
+            input_array = np.array(input_list).reshape(1, 100, 1).astype(np.float32)
 
-    model = load_model('stock_model.keras', compile=False)
-    predicted = model.predict(model_input)
-    predicted_price = scaler.inverse_transform(predicted)
+            # Set input tensor and invoke
+            interpreter.set_tensor(input_details[0]['index'], input_array)
+            interpreter.invoke()
 
-    st.subheader("📊 Predicted Closing Price")
-    st.write(f"${predicted_price[0][0]:.2f}")
+            # Get prediction
+            prediction = interpreter.get_tensor(output_details[0]['index'])
+            predicted_price = prediction[0][0]
+
+            st.success(f"📊 Predicted Next Price: **₹{predicted_price:.2f}**")
+
+    except ValueError:
+        st.error("Invalid input. Please enter only numeric values.")
+
+# Optional footer
+st.markdown("---")
+st.markdown("Created with ❤️ by Tushar Nirmal")
