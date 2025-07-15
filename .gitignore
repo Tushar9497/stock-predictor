@@ -1,0 +1,21 @@
+# Ignore virtual environment
+stock-env/
+venv/
+env/
+
+# Ignore model and dataset files
+*.keras
+*.h5
+*.pkl
+*.csv
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Environment files
+.env
+
+# VS Code and Jupyter files
+.vscode/
+.ipynb_checkpoints/
