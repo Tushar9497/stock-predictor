@@ -1,7 +1,6 @@
-streamlit
+streamlit>=1.0
 tensorflow==2.15.0
-pandas
 numpy
+pandas
 matplotlib
 scikit-learn
-streamlit>=1.0
